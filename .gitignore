@@ -1,0 +1,4 @@
+SpaVueNotebook/bin/
+.vs/
+SpaVueNotebook/ClientApp/node_modules/
+SpaVueNotebook/obj/
