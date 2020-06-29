@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <h1>Notebook</h1>
-    <Create/>
     <Home/>
   </div>
 </template>
