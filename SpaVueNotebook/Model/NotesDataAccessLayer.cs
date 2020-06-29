@@ -41,7 +41,7 @@ namespace SpaVueNotebook.Model
             try
             {
                 _context.Add(note);
-                _context.SaveChanges();
+                _context.SaveChangesAsync();
                 return 1;
             }
             catch
@@ -65,7 +65,7 @@ namespace SpaVueNotebook.Model
                 originalModel.Email = note.Email;
 
                 _context.Update(originalModel);
-                _context.SaveChanges();
+                _context.SaveChangesAsync();
                 return 1;
             }
             catch
@@ -80,7 +80,7 @@ namespace SpaVueNotebook.Model
             try
             {
                 _context.Entry(new Note { Id = id }).State = EntityState.Deleted; ;
-                _context.SaveChanges();
+                _context.SaveChangesAsync();
                 return 1;
             }
             catch

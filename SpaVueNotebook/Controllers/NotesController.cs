@@ -29,7 +29,7 @@ namespace SpaVueNotebook.Controllers
 
         [HttpPost]
         [Route("api/Notes/Create")]
-        public IActionResult Post([FromBody] Note note)
+        public IActionResult Post(Note note)
         {
             return Ok(
                 _notes.AddNote(note)
@@ -38,7 +38,7 @@ namespace SpaVueNotebook.Controllers
 
         [HttpPut]
         [Route("api/Note/Edit")]
-        public IActionResult Put([FromBody] Note note)
+        public IActionResult Put(Note note)
         {
             return Ok(
                 _notes.UpdateNote(note)

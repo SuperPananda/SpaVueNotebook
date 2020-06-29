@@ -3,3 +3,4 @@ SpaVueNotebook/bin/
 SpaVueNotebook/ClientApp/node_modules/
 SpaVueNotebook/obj/
 SpaVueNotebook/Migrations
+SpaVueNotebook/ClientApp/dist/
