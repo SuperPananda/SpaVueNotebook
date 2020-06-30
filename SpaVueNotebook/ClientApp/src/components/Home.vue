@@ -22,14 +22,14 @@
                 <div class="modal-header">
                   <h5 class="modal-title">Add Note</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" @click="showModal = false, editc = false">&times;</span>
+                    <span aria-hidden="true" @click="editCancel()">&times;</span>
                   </button>
                 </div>
                 <div class="modal-body">
                   <p v-if="errors.length">
                     <b>Please correct these errors:</b>
                     <ul>
-                      <li v-for="error in errors">{{ error }}</li>
+                      <li v-for="error in errors" :key="error.index">{{ error }}</li>
                     </ul>
                   </p>
                   <form @submit="formSubmit">
@@ -69,11 +69,11 @@ export default {
       editIndex: -1,
       errors: [],
       form: {
-        id: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: ""
+        id: null,
+        firstName: null,
+        lastName: null,
+        email: null,
+        phone: null
       },
       fields: ["firstName", "lastName", "phone", "email", "show_details"],
       items: []
@@ -82,13 +82,15 @@ export default {
   created() {
     this.getall();
   },
+  updated() {
+    this.getall();
+  },
   methods: {
     getall() {
       axios.get("api/Notes/All").then(response => (this.items = response.data));
     },
     remove(id) {
       axios.delete("api/Note/Delete/" + id);
-      this.getall();
     },
     edit(note) {
       this.editc = true;
@@ -96,16 +98,40 @@ export default {
       this.form = note;
       this.showModal = true;
     },
+    editCancel(){
+      this.editc = false;
+    	this.errors = [];
+      this.form.firstName = null;
+      this.form.lastName = null;
+      this.form.phone = null;
+      this.form.email = null;
+      this.showModal = false;
+    },
     formSubmit(e) {
-      e.preventDefault();
+      this.errors = [];
 
-      if (
-        this.form.firstName &&
-        this.form.lastName &&
-        this.form.phone &&
-        this.form.email
-      ) {
+      if (!this.form.phone){
+        this.errors.push('You must specify the phone number!');
+      }
+      else if (!this.validNumber(this.form.phone)) {
+        this.errors.push('Enter the correct phone number.');
+      }
+      if (!this.form.email){
+        this.errors.push('You must specify an email address!');
+      }
+      else if (!this.validEmail(this.form.email)) {
+        this.errors.push('Enter the correct email address.');
+      }
+      if (!this.form.firstName){
+        this.errors.push('You must specify the Name!');
+      }
+      if (!this.form.lastName){
+        this.errors.push('You must specify the Last Name!');
+      }
+
+      if (!this.errors.length) {
         if (!this.editc) {
+          console.log(this.form);
           const formData = new FormData();
           formData.append("FirstName", this.form.firstName);
           formData.append("Phone", this.form.phone);
@@ -123,26 +149,24 @@ export default {
           formData.append("LastName", this.form.lastName);
           axios.put("api/Note/Edit", formData);
           this.editc = false;
+          this.form.firstName = null;
+          this.form.lastName = null;
+          this.form.phone = null;
+          this.form.email = null;
         }
         this.showModal = false;
-        this.getall();
+        return true;
       }
+      e.preventDefault();
 
-      this.errors = [];
-
-      if (!this.form.phone){
-        this.errors.push('You must specify the phone number!');
-      }
-      if (!this.form.email){
-        this.errors.push('You must specify an email address!');
-      }
-      if (!this.form.firstName){
-        this.errors.push('You must specify the Name!');
-      }
-      if (!this.form.lastName){
-        this.errors.push('You must specify the Last Name!');
-      }
-
+    },
+    validEmail: function (email) {
+      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    },
+    validNumber: function (number) {
+      var re = /^(\s*)?(\+)?([- _():=+]?\d[- _():=+]?){10,14}(\s*)?$/;
+      return re.test(number);
     }
   }
 };
